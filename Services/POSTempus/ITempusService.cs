@@ -8,6 +8,8 @@ namespace tempus.service.core.api.Services.POSTempus
     {
         Task<PaymentTempusMethodResponse> PaymentTempusMethods_Select(PaymentTempusMethodRequest tempusReq);
 
+        Task<CorcentricTempusPaymentResponse> PaymentCorcentricTempusMethods_Select(CorcentricTempusPaymentRequest tempusReq);
+
         Task<bool> GenerateSignature(string sigdata, string fileName);
 
         Task<List<LocationModel>> GetLocations();

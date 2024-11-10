@@ -136,6 +136,58 @@ namespace tempus.service.core.api.Services.POSTempus
             return tempusResponse;
         }
 
+        public async Task<CorcentricTempusPaymentResponse> PaymentCorcentricTempusMethods_Select(CorcentricTempusPaymentRequest tempusReq)
+        {
+            var tempusResponse = new CorcentricTempusPaymentResponse();
+            var functionName = "PaymentCorcentricTempusMethods_Select";
+
+            using (var client = new HttpClient())
+            {
+                try
+                {
+                    // Serialize the object to XML
+                    string payload = SerializeToXml(tempusReq);
+
+                    XDocument document = XDocument.Parse(payload);
+                    var rootElements = document.Root.Elements();
+                    XDocument newDoc = new XDocument(new XElement("TTMESSAGE", rootElements));
+                    payload = newDoc.ToString();
+
+                    // Create the request content
+                    var content = new StringContent(payload, Encoding.UTF8, "application/xml");
+
+                    // Send the POST request
+                    var response = await client.PostAsync(this.settings.Value.TempusUri, content);
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        // Read response as string
+                        var responseString = await response.Content.ReadAsStringAsync();
+
+                        // Deserialize the XML response into the C# class
+                        var serializer = new XmlSerializer(typeof(CorcentricTempusPaymentResponse));
+                        using (var reader = new StringReader(responseString))
+                        {
+                            tempusResponse = (CorcentricTempusPaymentResponse)serializer.Deserialize(reader);
+
+                            //if error then don't Generate the signature
+                            await GenerateSignature(tempusResponse.TRANRESP.SIGDATA, tempusResponse.SESSIONID);
+                        }
+                    }
+                    else
+                    {
+                        this.logger.LogError($"{functionName} ERROR - {clock.GetCurrentInstant().ToDateTimeUtc().ToLocalTime()}: {response.StatusCode}");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    this.logger.LogError($"{functionName} EXCEPTION- {clock.GetCurrentInstant().ToDateTimeUtc().ToLocalTime()}: {ex.Message}");
+                }
+            }
+
+            return tempusResponse;
+        }
+
         private static string SerializeToXml<T>(T obj)
         {
             if (obj == null)
@@ -229,6 +281,8 @@ namespace tempus.service.core.api.Services.POSTempus
 
             return await Task.FromResult(success);
         }
+
+        
     }
 
 }
