@@ -7,7 +7,10 @@ trigger:
 - Sprint95_STR_Jose
 
 pool:
-  vmImage: 'windows-latest'
+  name: AutoLitasAgentPool
+  demands:
+    - msbuild
+    - Agent.Version -gtVersion 2.163.1
 
 variables:
   solution: '**/*.sln'
