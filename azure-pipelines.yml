@@ -4,8 +4,10 @@
 # https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
 
 trigger:
-- Sprint95_STR_Jose
-- master
+  branches:
+    include:
+      - Sprint95_STR_Jose
+      - master
 
 pool:
   name: AutoLitasAgentPool
