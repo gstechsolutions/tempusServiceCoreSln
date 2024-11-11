@@ -16,6 +16,7 @@ namespace tempus.service.core.api.Models.POSTempus
         public Transaction TRANSACTION { get; set; }
     }
 
+    //Authinfo details
     public class AuthInfo
     {
         [XmlElement("SUBSCRIBERKEY")]
