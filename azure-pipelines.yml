@@ -5,6 +5,7 @@
 
 trigger:
 - Sprint95_STR_Jose
+- master
 
 pool:
   name: AutoLitasAgentPool
